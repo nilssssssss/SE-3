@@ -1,4 +1,4 @@
-package org.hbrs.se1.ws26.solutions.uebung2;
+package org.hbrs.se1.ws26.exercises.uebung2;
 
 /**
  * Checked Exception (always subclasses from class Exception)

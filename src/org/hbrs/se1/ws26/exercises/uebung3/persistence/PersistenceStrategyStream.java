@@ -1,5 +1,10 @@
 package org.hbrs.se1.ws26.exercises.uebung3.persistence;
 import java.util.List;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class PersistenceStrategyStream<E> implements PersistenceStrategy<E> {
 
@@ -20,7 +25,13 @@ public class PersistenceStrategyStream<E> implements PersistenceStrategy<E> {
      * (Last Access: Oct, 12th 2026)
      */
     public void save(List<E> member) throws PersistenceException  {
-
+        try (FileOutputStream fos = new FileOutputStream(location);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(member);
+        } catch (IOException e) {
+            throw new PersistenceException(PersistenceException.ExceptionType.ConnectionNotAvailable,
+                    "Fehler beim Speichern in " + location + ": " + e.getMessage());
+        }
     }
 
     @Override
@@ -50,6 +61,18 @@ public class PersistenceStrategyStream<E> implements PersistenceStrategy<E> {
         // return newListe
 
         // and finally close the streams
-        return null;
+        try (FileInputStream fis = new FileInputStream(location);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            Object obj = ois.readObject();
+            if (obj instanceof List<?>) {
+                return (List<E>) obj;
+            }
+            throw new PersistenceException(PersistenceException.ExceptionType.ImplementationNotAvailable,
+                    "Die Datei enthaelt keine Liste!");
+        } catch (IOException | ClassNotFoundException e) {
+            throw new PersistenceException(PersistenceException.ExceptionType.ConnectionNotAvailable,
+                    "Fehler beim Laden aus " + location + ": " + e.getMessage());
+        }
     }
+
 }

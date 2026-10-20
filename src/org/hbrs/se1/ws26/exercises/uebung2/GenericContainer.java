@@ -1,4 +1,4 @@
-package org.hbrs.se1.ws26.solutions.uebung2;
+package org.hbrs.se1.ws26.exercises.uebung2;
 
 import java.util.ArrayList;
 import java.util.List;

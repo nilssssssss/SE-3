@@ -1,4 +1,7 @@
-package org.hbrs.se1.ws26.solutions.uebung2;
+package org.hbrs.se1.ws26.exercises.uebung2;
+
+import org.hbrs.se1.ws26.exercises.uebung3.persistence.PersistenceException;
+import org.hbrs.se1.ws26.exercises.uebung3.persistence.PersistenceStrategy;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,12 +11,52 @@ import java.util.stream.Collectors;
 
 public class Container {
 
+	//singleton-Pattern
+	private static Container instance;
+	private PersistenceStrategy<Member> persistenceStrategy;
 	/*
 	 * Interne ArrayList zur Abspeicherung der Objekte
-	 * Alternative: HashMap oder Set. HashMap hat vor allem Probleme 
+	 * Alternative: HashMap oder Set. HashMap hat vor allem Probleme
 	 * bei der Bewahrung der Konsistenz vom Key und Value (siehe TestStore, letzter Test)
 	 */
 	private List<Member> liste = new ArrayList<Member>();
+
+	private Container() {
+	}
+
+	public static Container getInstance() {
+		if (instance == null) {
+			instance = new Container();
+		}
+		return instance;
+	}
+	public void setPersistenceStrategy(PersistenceStrategy<Member> persistenceStrategy) {
+		this.persistenceStrategy = persistenceStrategy;
+	}
+
+	public void store() throws PersistenceException {
+		if (this.persistenceStrategy == null) {
+			throw new PersistenceException(
+					PersistenceException.ExceptionType.NoStrategyIsSet,
+					"Es wurde keine Persistenz-Strategie gesetzt!"
+			);
+		}
+		this.persistenceStrategy.save(this.liste);
+	}
+
+	public void load() throws PersistenceException {
+		if (this.persistenceStrategy == null) {
+			throw new PersistenceException(
+					PersistenceException.ExceptionType.NoStrategyIsSet,
+					"Es wurde keine Persistenz-Strategie gesetzt!"
+			);
+		}
+		// Lädt die Liste über die Strategie und überschreibt die Liste
+		List<Member> loadedList = this.persistenceStrategy.load();
+		if (loadedList != null) {
+			this.liste = loadedList;
+		}
+	}
 
 	
 	/*

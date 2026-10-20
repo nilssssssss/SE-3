@@ -1,7 +1,10 @@
 
 package se1.ws26.solutions.uebung2.test;
 
-import org.hbrs.se1.ws26.solutions.uebung2.*;
+import org.hbrs.se1.ws26.exercises.uebung2.Container;
+import org.hbrs.se1.ws26.exercises.uebung2.ContainerException;
+import org.hbrs.se1.ws26.exercises.uebung2.Member;
+import org.hbrs.se1.ws26.exercises.uebung2.MemberKonkret;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +17,7 @@ class ContainerTest {
     @BeforeEach
     void setUp() {
         // Den Container anlegen
-        container =  new Container();
+        container =  Container.getInstance();
     }
 
     @Test
